@@ -1,0 +1,11 @@
+import discord
+import json
+import asyncio
+
+intents = discord.Intents.default()
+intents.guilds = True
+intents.guild_messages = True
+intents.message_content = True
+intents.members = True
+
+client = disco
