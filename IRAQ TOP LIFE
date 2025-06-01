@@ -1,0 +1,44 @@
+import discord
+import json
+import asyncio
+
+intents = discord.Intents.default()
+intents.guilds = True
+intents.guild_messages = True
+intents.message_content = True
+intents.members = True
+
+client = discord.Client(intents=intents)
+
+# مسار ملف JSON
+json_path = 'IraqTopLife_DiscordTemplate.json'
+
+@client.event
+async def on_ready():
+    print(f'✅ Logged in as {client.user}')
+    
+    for guild in client.guilds:
+        await setup_server(guild)
+
+async def setup_server(guild):
+    with open(json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    # إنشاء الرتب
+    for role in data['roles']:
+        await guild.create_role(name=role['name'])
+        print(f'✅ Created role: {role["name"]}')
+
+    # إنشاء الفئات والقنوات
+    for category_data in data['categories']:
+        category = await guild.create_category(name=category_data['name'])
+        print(f'📂 Created category: {category.name}')
+
+        for channel_name in category_data['channels']:
+            await guild.create_text_channel(name=channel_name, category=category)
+            print(f'   📝 Created channel: {channel_name}')
+
+    print(f'🎉 Setup completed in: {guild.name}')
+
+# شغّل البوت باستخدام التوكن الخاص بك
+client.run('MTMwNzc2NTYyMjE0NjQ2OTk.50A.GesYrG.MHEFts-aCp32Wqf2DtT3-jO0Je418xjJe65Ubg')
